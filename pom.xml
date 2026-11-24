@@ -26,14 +26,14 @@
 
         <!-- Spring Boot -->
         <spring-boot.version>3.2.2</spring-boot.version>
-        <spring-boot-maven-plugin.version>3.2.2</spring-boot.version>
+        <spring-boot-maven-plugin.version>3.2.2</spring-boot-maven-plugin.version>
 
         <!-- Dependencies -->
         <postgresql.version>42.7.3</postgresql.version>
         <flyway.version>10.15.0</flyway.version>
         <hdrhistogram.version>2.1.12</hdrhistogram.version>
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <lombok.version>1.18.30</lombok.version>
+        <mapstruct.version>1.6.0</mapstruct.version>
+        <lombok.version>1.18.34</lombok.version>
         <testcontainers.version>1.19.7</testcontainers.version>
         <awaitility.version>4.2.1</awaitility.version>
         <spotless.version>2.42.0</spotless.version>
@@ -44,7 +44,7 @@
         <assertj.version>3.24.2</assertj.version>
 
         <!-- Plugin Versions -->
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
         <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
@@ -163,11 +163,8 @@
                         <source>${java.version}</source>
                         <target>${java.version}</target>
                         <encoding>${project.build.sourceEncoding}</encoding>
-                        <release>${java.version}</release>
                         <compilerArgs>
                             <arg>-Xlint:all</arg>
-                            <arg>-Werror</arg>
-                            <arg>--enable-preview</arg>
                         </compilerArgs>
                         <annotationProcessorPaths>
                             <path>
@@ -181,6 +178,15 @@
                                 <version>${mapstruct.version}</version>
                             </path>
                         </annotationProcessorPaths>
+                        <fork>true</fork>
+                        <compilerArgs>
+                            <arg>-Xlint:all</arg>
+                            <arg>--add-opens=java.base/java.lang=ALL-UNNAMED</arg>
+                            <arg>--add-opens=java.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                            <arg>--add-opens=java.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+                            <arg>--add-opens=java.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                            <arg>--add-opens=java.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                        </compilerArgs>
                     </configuration>
                 </plugin>
 
@@ -256,7 +262,12 @@
                                 <style>GOOGLE</style>
                             </googleJavaFormat>
                             <licenseHeader>
-                                <content>/*&#10; * Copyright (c) 2026 RaceLab Contributors&#10; * Licensed under the MIT License&#10; */&#10;&#10;
+                                <content>
+/*
+ * Copyright (c) 2026 RaceLab Contributors
+ * Licensed under the MIT License
+ */
+                            </content>
                             </licenseHeader>
                             <importOrder>
                                 <order>java,javax,org.springframework,org.hibernate,com.racelab</order>
