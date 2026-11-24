@@ -148,10 +148,31 @@ public class RedisDistributedLock {
     }
 
     /**
-     * Handle for a acquired lock. Use try-with-resources pattern.
+     * Handle for an acquired lock. Use try-with-resources pattern.
      */
-    public record LockHandle(String lockKey, String lockValue, RedisDistributedLock lock) implements AutoCloseable {
+    public static final class LockHandle implements AutoCloseable {
+        private final String lockKey;
+        private final String lockValue;
+        private final RedisDistributedLock lock;
         private volatile boolean released = false;
+
+        public LockHandle(String lockKey, String lockValue, RedisDistributedLock lock) {
+            this.lockKey = lockKey;
+            this.lockValue = lockValue;
+            this.lock = lock;
+        }
+
+        public String lockKey() {
+            return lockKey;
+        }
+
+        public String lockValue() {
+            return lockValue;
+        }
+
+        public RedisDistributedLock lock() {
+            return lock;
+        }
 
         public boolean isReleased() {
             return released;

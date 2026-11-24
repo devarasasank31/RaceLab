@@ -33,7 +33,7 @@
         <flyway.version>10.15.0</flyway.version>
         <hdrhistogram.version>2.1.12</hdrhistogram.version>
         <mapstruct.version>1.6.0</mapstruct.version>
-        <lombok.version>1.18.34</lombok.version>
+        <lombok.version>1.18.36</lombok.version>
         <testcontainers.version>1.19.7</testcontainers.version>
         <awaitility.version>4.2.1</awaitility.version>
         <spotless.version>2.42.0</spotless.version>
@@ -160,8 +160,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
+                        <source>21</source>
+                        <target>21</target>
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <compilerArgs>
                             <arg>-Xlint:all</arg>
@@ -182,10 +182,14 @@
                         <compilerArgs>
                             <arg>-Xlint:all</arg>
                             <arg>--add-opens=java.base/java.lang=ALL-UNNAMED</arg>
+                            <arg>--add-opens=java.base/java.util=ALL-UNNAMED</arg>
+                            <arg>--add-opens=java.base/java.time=ALL-UNNAMED</arg>
                             <arg>--add-opens=java.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
                             <arg>--add-opens=java.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
                             <arg>--add-opens=java.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
                             <arg>--add-opens=java.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                            <arg>--add-opens=java.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                            <arg>--add-opens=java.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
                         </compilerArgs>
                     </configuration>
                 </plugin>
