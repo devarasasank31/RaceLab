@@ -1,0 +1,82 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: racelab-api
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:racelab}
+    username: ${POSTGRES_USER:racelab}
+    password: ${POSTGRES_PASSWORD:racelab}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+      leak-detection-threshold: 60000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+        jdbc.lob.non_contextual_creation: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+
+  webflux:
+    base-path: /api
+
+  doc:
+    swagger-ui:
+      path: /swagger-ui.html
+      operations-sorter: method
+
+racelab:
+  engine:
+    default-concurrent-users: 10
+    default-request-timeout-seconds: 30
+    max-concurrent-users: 10000
+    max-total-requests: 1000000
+    max-duration-seconds: 3600
+    default-ramp-up-seconds: 0
+    cpu-thread-pool-core-size: 4
+    cpu-thread-pool-max-size: 16
+    thread-pool-queue-capacity: 10000
+    use-virtual-threads: true
+    shutdown-timeout-seconds: 30
+    detailed-logging: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+logging:
+  level:
+    com.racelab: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.netty: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
