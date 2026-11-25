@@ -1,5 +1,6 @@
 package com.racelab.core.strategy;
 
+import com.racelab.core.domain.ConcurrencyStrategyType;
 import lombok.*;
 
 import java.util.Map;

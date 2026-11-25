@@ -12,7 +12,7 @@ public final class CancellationToken {
 
     private final AtomicBoolean cancelled = new AtomicBoolean(false);
     @Getter
-    private final String reason;
+    private String reason;
 
     private CancellationToken(String reason) {
         this.reason = reason;

@@ -1,21 +1,88 @@
 package com.racelab.core.util;
 
-import org.hdrhistogram.Histogram;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.LongConsumer;
 
 /**
- * Utility for calculating accurate percentiles using HdrHistogram.
+ * Utility for calculating accurate percentiles using a sorted list.
  * Avoids the common mistake of calculating percentiles from averages.
+ * Thread-safe implementation using synchronized list.
  */
 public final class PercentileCalculator {
 
-    private static final long LOWEST_TRACKABLE_VALUE = 1L; // 1 microsecond
-    private static final long HIGHEST_TRACKABLE_VALUE = 3_600_000_000L; // 1 hour in microseconds
-    private static final int SIGNIFICANT_FIGURES = 3;
+    /**
+     * A thread-safe histogram implementation using a synchronized list.
+     * Stores all recorded values for accurate percentile calculation.
+     */
+    public static final class Histogram {
+        private final List<Long> values = Collections.synchronizedList(new ArrayList<>());
+
+        public void recordValue(long value) {
+            values.add(value);
+        }
+
+        public void add(Histogram other) {
+            values.addAll(other.values);
+        }
+
+        public long getTotalCount() {
+            synchronized (values) {
+                return values.size();
+            }
+        }
+
+        public double getMean() {
+            synchronized (values) {
+                if (values.isEmpty()) return 0.0;
+                return values.stream().mapToLong(Long::longValue).average().orElse(0.0);
+            }
+        }
+
+        public long getMinValue() {
+            synchronized (values) {
+                if (values.isEmpty()) return 0L;
+                return Collections.min(values);
+            }
+        }
+
+        public long getMaxValue() {
+            synchronized (values) {
+                if (values.isEmpty()) return 0L;
+                return Collections.max(values);
+            }
+        }
+
+        public double getStdDeviation() {
+            synchronized (values) {
+                if (values.isEmpty()) return 0.0;
+                double mean = getMean();
+                double variance = values.stream()
+                    .mapToDouble(v -> Math.pow(v - mean, 2))
+                    .average()
+                    .orElse(0.0);
+                return Math.sqrt(variance);
+            }
+        }
+
+        public long getValueAtPercentile(double percentile) {
+            synchronized (values) {
+                if (values.isEmpty()) return 0L;
+                List<Long> sorted = new ArrayList<>(values);
+                Collections.sort(sorted);
+                int index = (int) Math.ceil(percentile / 100.0 * sorted.size()) - 1;
+                index = Math.max(0, Math.min(index, sorted.size() - 1));
+                return sorted.get(index);
+            }
+        }
+
+        public List<Long> getValues() {
+            synchronized (values) {
+                return new ArrayList<>(values);
+            }
+        }
+    }
 
     private PercentileCalculator() {
         // Utility class
@@ -25,7 +92,7 @@ public final class PercentileCalculator {
      * Create a new histogram for recording latencies.
      */
     public static Histogram createHistogram() {
-        return new Histogram(LOWEST_TRACKABLE_VALUE, HIGHEST_TRACKABLE_VALUE, SIGNIFICANT_FIGURES);
+        return new Histogram();
     }
 
     /**
@@ -86,8 +153,7 @@ public final class PercentileCalculator {
      * Record values from a LongConsumer (e.g., parallel stream).
      */
     public static void recordFrom(Histogram histogram, LongConsumer consumer) {
-        // This is a placeholder - in practice you'd use histogram.recordValueWithCount
-        // or record directly in the consumer
+        // Placeholder for future implementation
     }
 
     /**
@@ -114,44 +180,5 @@ public final class PercentileCalculator {
         public boolean hasData() {
             return count > 0;
         }
-    }
-
-    /**
-     * Calculate percentiles from a list of latencies (for verification/testing).
-     * This uses sorting and is O(n log n) - only for small datasets or verification.
-     */
-    public static Percentiles calculateFromList(List<Long> latenciesMs) {
-        if (latenciesMs.isEmpty()) {
-            return new Percentiles(0, 0, 0, 0, 0, 0, 0, 0, 0);
-        }
-
-        List<Long> sorted = new ArrayList<>(latenciesMs);
-        Collections.sort(sorted);
-
-        long count = sorted.size();
-        double sum = sorted.stream().mapToLong(Long::longValue).sum();
-        double mean = sum / count;
-
-        double min = sorted.get(0);
-        double max = sorted.get(count - 1);
-
-        double median = percentile(sorted, 50);
-        double p95 = percentile(sorted, 95);
-        double p99 = percentile(sorted, 99);
-        double p999 = percentile(sorted, 99.9);
-
-        // Standard deviation
-        double variance = sorted.stream()
-            .mapToDouble(v -> Math.pow(v - mean, 2))
-            .sum() / count;
-        double stdDev = Math.sqrt(variance);
-
-        return new Percentiles(mean, median, p95, p99, p999, min, max, stdDev, count);
-    }
-
-    private static double percentile(List<Long> sorted, double p) {
-        int index = (int) Math.ceil(p / 100.0 * sorted.size()) - 1;
-        index = Math.max(0, Math.min(index, sorted.size() - 1));
-        return sorted.get(index);
     }
 }

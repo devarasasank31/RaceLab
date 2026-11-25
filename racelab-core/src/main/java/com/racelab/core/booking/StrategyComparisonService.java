@@ -54,7 +54,7 @@ public class StrategyComparisonService {
 
             // Run concurrent booking test
             StrategyComparisonResult.StrategyResult result = runConcurrentTest(
-                service, eventId, concurrentRequests, quantityPerRequest
+                service, eventId, totalQuantity, concurrentRequests, quantityPerRequest
             );
             results.add(result);
 
@@ -68,6 +68,7 @@ public class StrategyComparisonService {
     private StrategyComparisonResult.StrategyResult runConcurrentTest(
             BookingService service,
             String eventId,
+            int totalQuantity,
             int concurrentRequests,
             int quantityPerRequest) {
 
@@ -119,6 +120,7 @@ public class StrategyComparisonService {
             .failedBookings(failureCount.get())
             .finalAvailableQuantity(finalAvailable)
             .finalBookedQuantity(finalBooked)
+            .totalQuantity(totalQuantity)
             .results(allResults)
             .consistent(finalBooked <= totalQuantity && finalAvailable >= 0)
             .build();

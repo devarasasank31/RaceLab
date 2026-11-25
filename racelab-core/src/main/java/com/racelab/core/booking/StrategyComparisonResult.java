@@ -36,6 +36,7 @@ public class StrategyComparisonResult {
         private int failedBookings;
         private int finalAvailableQuantity;
         private int finalBookedQuantity;
+        private int totalQuantity;
         private List<BookingResult> results;
         private boolean consistent;
 

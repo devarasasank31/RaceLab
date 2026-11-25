@@ -1,5 +1,6 @@
 package com.racelab.core.booking;
 
+import com.racelab.core.domain.ConcurrencyStrategyType;
 import com.racelab.core.domain.Ticket;
 import com.racelab.core.domain.TicketStatus;
 import com.racelab.core.repository.TicketRepository;

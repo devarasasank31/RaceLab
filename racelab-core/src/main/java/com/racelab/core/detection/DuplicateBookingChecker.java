@@ -2,6 +2,7 @@ package com.racelab.core.detection;
 
 import com.racelab.core.domain.TestExecution;
 import com.racelab.core.domain.Ticket;
+import com.racelab.core.domain.TicketStatus;
 import com.racelab.core.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 

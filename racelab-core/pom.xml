@@ -22,6 +22,18 @@
             <artifactId>spring-data-jpa</artifactId>
         </dependency>
 
+        <!-- JPA API (for @Entity, @Table, @Id, @Column, etc.) -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+        </dependency>
+
+        <!-- Hibernate core (includes annotations like @CreationTimestamp, @UpdateTimestamp) -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+
         <!-- Validation API -->
         <dependency>
             <groupId>jakarta.validation</groupId>
@@ -41,10 +53,14 @@
             <artifactId>mapstruct</artifactId>
         </dependency>
 
-        <!-- HdrHistogram for percentile calculations -->
+        <!-- Redis for distributed locking -->
         <dependency>
-            <groupId>org.hdrhistogram</groupId>
-            <artifactId>HdrHistogram</artifactId>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
         </dependency>
 
         <!-- Test dependencies -->
